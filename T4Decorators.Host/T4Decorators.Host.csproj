@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IDerivedInterface.part.cs" />
+    <None Include="install.ps1" />
     <None Include="T4Decorators.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>T4Decorators.cs</LastGenOutput>

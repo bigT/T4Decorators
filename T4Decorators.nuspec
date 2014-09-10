@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+  <metadata minClientVersion="2.7">
+    <id>T4Decorators</id>
+    <title>T4Decorators</title>
+    <version>1.0.1</version>
+    <authors>Taras Alenin</authors>
+    <owners>Taras Alenin</owners>
+    <licenseUrl>https://github.com/bigT/T4Decorators/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/bigT/T4Decorators</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <developmentDependency>true</developmentDependency>
+    <description>
+      T4Decorats is a T4 template that can be used in any project that uses decorators/wrappers to add
+      runtime behaviour to existing classes. Eliminates manual overhead required to keep decorators in
+      sync with interfaces/classes it wraps.
+    </description>
+    <summary>
+      T4Decorats is a T4 template that can be used in any project that uses decorators/wrappers to add
+      runtime behaviour to existing classes. Eliminates manual overhead required to keep decorators in
+      sync with interfaces/classes it wraps.
+    </summary>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright (c) Taras Alenin (taras.alenin@gmail.com)</copyright>
+    <language>en-US</language>
+  </metadata>
+  <files>
+    <file src="license.txt" target="license.txt" />
+    <file src="T4Decorators.Host/T4Decorators.tt" target="Content" />
+    <file src="T4Decorators.Host/install.ps1" target="tools" />
+  </files>
+</package>
