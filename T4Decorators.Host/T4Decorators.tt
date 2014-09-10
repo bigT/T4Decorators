@@ -1,4 +1,9 @@
 ﻿<#@ template language="C#" debug="true" hostspecific="true" #>
+<#
+// This software is derived from work done by http://t4mvc.codeplex.com/
+// project. Covered by Apache License 2.0 (Apache) license.
+// Both original and derived work is covered by the same license.
+#>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="Microsoft.VisualStudio.Shell.Interop" #>
 <#@ assembly name="EnvDTE" #>
