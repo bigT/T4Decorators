@@ -113,15 +113,25 @@ if (property.HasSetter) { #>
 
 <#} /* end:property */#>
 <#foreach (var method in target.Methods) { #>
+<#if (method.ReturnType != "void") { #>
         public <#= method.ReturnType #> <#= method.Name #>(<# method.WriteFormalParameters(true); #>)
         {
-            using (this.CreateTracingConext("<#= decorator.ClassName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
+            using (this.CreateTracingContext("<#= decorator.ClassName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
             {
                 return <#= target.AccessExpression #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>);
             }
         }
 
-<#}}#>
+<# } else { #>
+        public void <#= method.Name #>(<# method.WriteFormalParameters(true); #>)
+        {
+            using (this.CreateTracingContext("<#= decorator.ClassName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
+            {
+                <#= target.AccessExpression #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>);
+            }
+        }
+
+<# } /* void */ } /* end:method */ } /* end:target */#>
     }
 }
 <#manager.EndBlock(); #>
@@ -131,7 +141,7 @@ namespace <#= T4Namespace #>.Generated
 {
     internal interface ITracingContextFactory
     {
-        IDisposable CreateTracingConext(string name);
+        IDisposable CreateTracingContext(string name);
     }
 }
 

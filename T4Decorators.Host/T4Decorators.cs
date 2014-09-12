@@ -16,7 +16,7 @@ namespace T4Decorators.Host.Generated
 {
     internal interface ITracingContextFactory
     {
-        IDisposable CreateTracingConext(string name);
+        IDisposable CreateTracingContext(string name);
     }
 }
 

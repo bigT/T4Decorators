@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Decorators\DerivedTestDecorator.cs" />
+    <Compile Include="Decorators\DerivedTestTracingDecorator.cs" />
     <Compile Include="Decorators\SimpleConstructorOnlyTestDecorator.cs" />
     <Compile Include="Decorators\SimpleStaticTestDecorator.cs" />
     <Compile Include="Interfaces\IDerivedInterface.cs" />
@@ -51,6 +52,9 @@
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
     <Compile Include="T4Decorators.Host.Decorators.DerivedTestDecorator.generated.cs">
+      <DependentUpon>T4Decorators.tt</DependentUpon>
+    </Compile>
+    <Compile Include="T4Decorators.Host.Decorators.DerivedTestTracingDecorator.generated.cs">
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
     <Compile Include="T4Decorators.Host.Decorators.SimpleConstructorOnlyTestDecorator.generated.cs">
