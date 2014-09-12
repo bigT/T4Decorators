@@ -3,7 +3,7 @@
   <metadata minClientVersion="2.7">
     <id>T4Decorators</id>
     <title>T4Decorators</title>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <authors>Taras Alenin</authors>
     <owners>Taras Alenin</owners>
     <licenseUrl>https://github.com/bigT/T4Decorators/blob/master/license.txt</licenseUrl>
@@ -11,16 +11,18 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <developmentDependency>true</developmentDependency>
     <description>
-      T4Decorats is a T4 template that can be used in any project that uses decorators/wrappers to add
-      runtime behaviour to existing classes. Eliminates manual overhead required to keep decorators in
-      sync with interfaces/classes it wraps.
+      T4Decorators is a T4 code generator that follows a couple of simple conventions to scan for partial
+      decorators implementations (wrappers) and provide implementation for missing members. Eliminates manual
+      overhead required to keep decorators in sync with interfaces/classes it wraps..
     </description>
     <summary>
-      T4Decorats is a T4 template that can be used in any project that uses decorators/wrappers to add
-      runtime behaviour to existing classes. Eliminates manual overhead required to keep decorators in
-      sync with interfaces/classes it wraps.
+      T4Decorators is a T4 code generator that follows a couple of simple conventions to scan for partial
+      decorators implementations (wrappers) and provide implementation for missing members. Eliminates manual
+      overhead required to keep decorators in sync with interfaces/classes it wraps.
     </summary>
     <releaseNotes>
+      1.1.0 - Change to generated tracing context name. Now derived from the target type name rather than
+      decorator type name.
     </releaseNotes>
     <copyright>Copyright (c) Taras Alenin (taras.alenin@gmail.com)</copyright>
     <language>en-US</language>
