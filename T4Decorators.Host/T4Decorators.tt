@@ -93,7 +93,7 @@ namespace <#=decorator.Namespace #>
 <# if (property.HasGetter) { #>
             get
             {
-                using (this.CreateTracingContext("<#= decorator.ClassName #>.<#= property.Name #>(Getter)"))
+                using (this.CreateTracingContext("<#= target.TypeName #>.<#= property.Name #>(Getter)"))
                 {
                     return <#= target.AccessExpression #>.<#= property.Name #>;
                 }
@@ -103,7 +103,7 @@ namespace <#=decorator.Namespace #>
 if (property.HasSetter) { #>
             set
             {
-                using (this.CreateTracingContext("<#= decorator.ClassName #>.<#= property.Name #>(Setter)"))
+                using (this.CreateTracingContext("<#= target.TypeName #>.<#= property.Name #>(Setter)"))
                 {
                     <#= target.AccessExpression #>.<#= property.Name #> = value;
                 }
@@ -116,7 +116,7 @@ if (property.HasSetter) { #>
 <#if (method.ReturnType != "void") { #>
         public <#= method.ReturnType #> <#= method.Name #>(<# method.WriteFormalParameters(true); #>)
         {
-            using (this.CreateTracingContext("<#= decorator.ClassName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
+            using (this.CreateTracingContext("<#= target.TypeName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
             {
                 return <#= target.AccessExpression #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>);
             }
@@ -125,7 +125,7 @@ if (property.HasSetter) { #>
 <# } else { #>
         public void <#= method.Name #>(<# method.WriteFormalParameters(true); #>)
         {
-            using (this.CreateTracingContext("<#= decorator.ClassName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
+            using (this.CreateTracingContext("<#= target.TypeName #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>)"))
             {
                 <#= target.AccessExpression #>.<#= method.Name #>(<# method.WriteFormalParametersForInvoke(true); #>);
             }
@@ -345,7 +345,7 @@ void ProcessDecorationTargets(DecoratorInfo decoratorInfo, CodeClass2 current)
     decoratorInfo.DecorationTargets = 
         (from target in GetFields(current)
          where interfaces.Where(i => i.FullName == target.Type.AsFullName).Any()
-         select new DecorationTargetInfo(current, (CodeTypeRef2)target.Type, GetAccessExpression(target, current.Name))).ToArray();
+         select new DecorationTargetInfo(current, target)).ToArray();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,20 +389,6 @@ static bool IsDecorator(CodeClass2 type)
 static string ProcessAreaOrDecoratorName(string name)
 {
     return name;
-}
-
-// Get access expression
-static string GetAccessExpression(CodeVariable2 variable, string declaringType)
-{
-    if (variable.IsShared)
-    {
-        return string.Format("{0}.{1}", declaringType, variable.Name);
-    }
-    else
-    {
-        return string.Format("this.{0}", variable.Name);
-    }
-
 }
 
 // Return all the CodeFunction2 in the CodeElements collection
@@ -909,18 +895,19 @@ class DecorationTargetInfo
     private readonly ICollection<PropertyInfo> implementedProperties;
     private readonly string accessExpression;
     private readonly CodeClass2 implementation;
+    private readonly CodeVariable2 target;
 
-    public DecorationTargetInfo(CodeClass2 implementation, CodeTypeRef2 source, string target)
+    public DecorationTargetInfo(CodeClass2 implementation, CodeVariable2 target)
     {
         this.methods = new List<FunctionInfo>();
         this.properties = new List<PropertyInfo>();
         this.implementedMethods = GetMethods(implementation).Select(f => new FunctionInfo(f)).ToArray();
         this.implementedProperties = implementation.Members.OfType<CodeProperty2>().Select(p => new PropertyInfo(p)).ToArray();
 
-        if (source.CodeType.Kind == vsCMElement.vsCMElementInterface)
+        if (target.Type.CodeType.Kind == vsCMElement.vsCMElementInterface)
         {
             // Get all interfaces we need to implement by walking the inheritance hierarchy
-            var interfaces = this.ProcessInterfaces((CodeInterface2)source.CodeType);
+            var interfaces = this.ProcessInterfaces((CodeInterface2)target.Type.CodeType);
 
             foreach(var targetInterface in interfaces)
             {
@@ -932,11 +919,16 @@ class DecorationTargetInfo
             }
         }
 
-        this.accessExpression = target;
+        // An access expression to the target for the templates.
+        this.accessExpression = target.IsShared
+            ? string.Format("{0}.{1}", implementation.Name, target.Name) : string.Format("this.{0}", target.Name);
+
         this.implementation = implementation;
+        this.target = target;
     }
 
     public string AccessExpression { get { return this.accessExpression; } }
+    public string TypeName { get { return this.target.Type.AsString; } }
     public ICollection<FunctionInfo> Methods { get { return this.methods; } }
     public ICollection<PropertyInfo> Properties { get { return this.properties; } }
 

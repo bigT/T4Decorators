@@ -19,7 +19,7 @@ namespace T4Decorators.Host.Decorators
         {
             get
             {
-                using (this.CreateTracingContext("DerivedTestTracingDecorator.GetterTest(Getter)"))
+                using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.GetterTest(Getter)"))
                 {
                     return this.derivedInterface.GetterTest;
                 }
@@ -30,7 +30,7 @@ namespace T4Decorators.Host.Decorators
         {
             set
             {
-                using (this.CreateTracingContext("DerivedTestTracingDecorator.SetterTest(Setter)"))
+                using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.SetterTest(Setter)"))
                 {
                     this.derivedInterface.SetterTest = value;
                 }
@@ -41,14 +41,14 @@ namespace T4Decorators.Host.Decorators
         {
             get
             {
-                using (this.CreateTracingContext("DerivedTestTracingDecorator.GetterAndSetterTest(Getter)"))
+                using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.GetterAndSetterTest(Getter)"))
                 {
                     return this.derivedInterface.GetterAndSetterTest;
                 }
             }
             set
             {
-                using (this.CreateTracingContext("DerivedTestTracingDecorator.GetterAndSetterTest(Setter)"))
+                using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.GetterAndSetterTest(Setter)"))
                 {
                     this.derivedInterface.GetterAndSetterTest = value;
                 }
@@ -57,7 +57,7 @@ namespace T4Decorators.Host.Decorators
 
         public void VoidMethodTest()
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.VoidMethodTest()"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.VoidMethodTest()"))
             {
                 this.derivedInterface.VoidMethodTest();
             }
@@ -65,7 +65,7 @@ namespace T4Decorators.Host.Decorators
 
         public T4Decorators.Host.Generated.Interfaces.ISimpleTest GetMethodTest()
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.GetMethodTest()"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.GetMethodTest()"))
             {
                 return this.derivedInterface.GetMethodTest();
             }
@@ -73,7 +73,7 @@ namespace T4Decorators.Host.Decorators
 
         public void SetTestMethod(T4Decorators.Host.Generated.Interfaces.ISimpleTest simpleTest)
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.SetTestMethod(simpleTest)"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.SetTestMethod(simpleTest)"))
             {
                 this.derivedInterface.SetTestMethod(simpleTest);
             }
@@ -81,7 +81,7 @@ namespace T4Decorators.Host.Decorators
 
         public T4Decorators.Host.Generated.Interfaces.ISimpleTest OutMethodTest(out T4Decorators.Host.Generated.Interfaces.ISimpleTest simpleTest)
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.OutMethodTest(out simpleTest)"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.OutMethodTest(out simpleTest)"))
             {
                 return this.derivedInterface.OutMethodTest(out simpleTest);
             }
@@ -89,7 +89,7 @@ namespace T4Decorators.Host.Decorators
 
         public T4Decorators.Host.Generated.Interfaces.ISimpleTest RefMethodTest(ref T4Decorators.Host.Generated.Interfaces.ISimpleTest simpleTest)
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.RefMethodTest(ref simpleTest)"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.RefMethodTest(ref simpleTest)"))
             {
                 return this.derivedInterface.RefMethodTest(ref simpleTest);
             }
@@ -97,7 +97,7 @@ namespace T4Decorators.Host.Decorators
 
         public T4Decorators.Host.Generated.Interfaces.ISimpleTest GetTestDefault(T4Decorators.Host.Interfaces.IDerivedInterface derivedInterface, bool defaultBool)
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.GetTestDefault(derivedInterface, defaultBool)"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.GetTestDefault(derivedInterface, defaultBool)"))
             {
                 return this.derivedInterface.GetTestDefault(derivedInterface, defaultBool);
             }
@@ -105,7 +105,7 @@ namespace T4Decorators.Host.Decorators
 
         public T4Decorators.Host.Interfaces.IDerivedInterface MethodWithParamsTest(params string[] testParams)
         {
-            using (this.CreateTracingContext("DerivedTestTracingDecorator.MethodWithParamsTest(testParams)"))
+            using (this.CreateTracingContext("T4Decorators.Host.Interfaces.IDerivedInterface.MethodWithParamsTest(testParams)"))
             {
                 return this.derivedInterface.MethodWithParamsTest(testParams);
             }
