@@ -2,11 +2,11 @@
 
 namespace T4Decorators.Host.Decorators
 {
-    partial class DerivedTestDecorator : IDerivedInterface
+    partial class DerivedDecorator : IDerivedInterface
     {
         private readonly IDerivedInterface derivedInterface;
 
-        public DerivedTestDecorator(IDerivedInterface derivedInterface)
+        public DerivedDecorator(IDerivedInterface derivedInterface)
         {
             this.derivedInterface = derivedInterface;
         }

@@ -2,6 +2,6 @@
 {
     public partial interface IDerivedInterface
     {
-        IDerivedInterface MethodWithParamsTest(params string[] testParams);
+        IDerivedInterface ParamsParamMethod(params string[] testParams);
     }
 }

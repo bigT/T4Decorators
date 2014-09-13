@@ -2,8 +2,8 @@
 
 namespace T4Decorators.Host.Interfaces
 {
-    public partial interface IDerivedInterface : ISimpleTest
+    public partial interface IDerivedInterface : ISimple
     {
-        ISimpleTest GetTestDefault(IDerivedInterface derivedInterface, bool defaultBool = true);
+        ISimple DefaultParamMethod(IDerivedInterface derivedInterface, bool defaultBool = true);
     }
 }

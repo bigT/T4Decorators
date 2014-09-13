@@ -39,28 +39,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Decorators\DerivedTestDecorator.cs" />
-    <Compile Include="Decorators\DerivedTestTracingDecorator.cs" />
-    <Compile Include="Decorators\SimpleConstructorOnlyTestDecorator.cs" />
-    <Compile Include="Decorators\SimpleStaticTestDecorator.cs" />
+    <Compile Include="Decorators\DerivedDecorator.cs" />
+    <Compile Include="Decorators\DerivedTracingDecorator.cs" />
+    <Compile Include="Decorators\SimpleDecorator.cs" />
+    <Compile Include="Decorators\SimpleStaticDecorator.cs" />
     <Compile Include="Interfaces\IDerivedInterface.cs" />
-    <Compile Include="Interfaces\ISimpleTest.cs" />
+    <Compile Include="Interfaces\ISimple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="T4Decorators.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
-    <Compile Include="T4Decorators.Host.Decorators.DerivedTestDecorator.generated.cs">
+    <Compile Include="T4Decorators.Host.Decorators.DerivedDecorator.generated.cs">
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
-    <Compile Include="T4Decorators.Host.Decorators.DerivedTestTracingDecorator.generated.cs">
+    <Compile Include="T4Decorators.Host.Decorators.DerivedTracingDecorator.generated.cs">
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
-    <Compile Include="T4Decorators.Host.Decorators.SimpleConstructorOnlyTestDecorator.generated.cs">
+    <Compile Include="T4Decorators.Host.Decorators.SimpleDecorator.generated.cs">
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
-    <Compile Include="T4Decorators.Host.Decorators.SimpleStaticTestDecorator.generated.cs">
+    <Compile Include="T4Decorators.Host.Decorators.SimpleStaticDecorator.generated.cs">
       <DependentUpon>T4Decorators.tt</DependentUpon>
     </Compile>
   </ItemGroup>
