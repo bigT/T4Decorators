@@ -37,7 +37,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-<#foreach (var decorator in GetDecorators().Where(d => d.IsTracingDecorator == false)) { #>
+<#foreach (var decorator in Decorators.Where(d => d.IsTracingDecorator == false)) { #>
 <#manager.StartNewFile(decorator.GeneratedFileName); #>
 namespace <#=decorator.Namespace #>
 {
@@ -78,7 +78,7 @@ if (property.HasSetter) { #>
 <#} #>
 
 
-<#foreach (var decorator in GetDecorators().Where(d => d.IsTracingDecorator == true)) { #>
+<#foreach (var decorator in Decorators.Where(d => d.IsTracingDecorator == true)) { #>
 <#manager.StartNewFile(decorator.GeneratedFileName); #>
 namespace <#=decorator.Namespace #>
 {
@@ -160,25 +160,11 @@ const string GeneratedCode = @"GeneratedCode(""T4Decorator"", ""1.0"")";
 static TextTransformation TT;
 static DTE Dte;
 static Project Project;
-static HashSet<AreaInfo> Areas;
+static HashSet<DecoratorInfo> Decorators;
 static string T4Folder;
 static string T4FileName;
-static string AppRoot;
 static string T4Namespace;
 static Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-IEnumerable<DecoratorInfo> GetDecorators()
-{
-    var decorators = new List<DecoratorInfo>();
-
-    foreach (var area in Areas)
-    {
-        decorators.AddRange(area.GetDecorators());
-    }
-
-    return decorators;
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialize rendering context
@@ -187,7 +173,7 @@ void PrepareDataToRender(TextTransformation tt)
     TT = tt;
     T4FileName = Path.GetFileName(Host.TemplateFile);
     T4Folder = Path.GetDirectoryName(Host.TemplateFile);
-    Areas = new HashSet<AreaInfo>();
+    Decorators = new HashSet<DecoratorInfo>();
 
     // Get the DTE service from the host
     var serviceProvider = Host as IServiceProvider;
@@ -209,14 +195,11 @@ void PrepareDataToRender(TextTransformation tt)
         return;
     }
 
-    // Get the path of the root folder of the application
-    AppRoot = Path.GetDirectoryName(Project.FullName) + '\\';
-
     // Get the project global name space
     T4Namespace = Project.Properties.Item("DefaultNamespace").Value.ToString();
 
-    // Process decorators and views from project root
-    ProcessProjectRoot(Project);
+    // Process decorators and project root
+    ProcessDecorators(Project.ProjectItems, Decorators);
 }
 
 Project GetProjectContainingT4File(DTE dte)
@@ -234,50 +217,45 @@ Project GetProjectContainingT4File(DTE dte)
 
 void ProcessProjectRoot(Project project)
 {
-    var area = new AreaInfo() { Name = null };
 
-    // process decorators and views from their folders
-    ProcessDecorators(project.ProjectItems, area);
-
-    Areas.Add(area);
 }
 
-void ProcessDecorators(ProjectItems areaFolderItems, AreaInfo area)
+void ProcessDecorators(ProjectItems areaFolderItems, HashSet<DecoratorInfo> decorators)
 {
     foreach(ProjectItem projectItem in areaFolderItems)
     {
         // Every folder might contain a decorator.
-        ProcessDecoratorsRecursive(projectItem, area);
+        ProcessDecoratorsRecursive(projectItem, decorators);
     }
 }
 
-void ProcessDecoratorsRecursive(ProjectItem projectItem, AreaInfo area)
+void ProcessDecoratorsRecursive(ProjectItem projectItem, HashSet<DecoratorInfo> decorators)
 {
     // Recurse into all the sub-items (both files and folder can have some - e.g. .tt files)
     foreach (ProjectItem item in projectItem.ProjectItems)
     {
-        ProcessDecoratorsRecursive(item, area);
+        ProcessDecoratorsRecursive(item, decorators);
     }
 
     if (projectItem.FileCodeModel != null)
     {
-        DateTime controllerLastWriteTime = File.GetLastWriteTime(projectItem.get_FileNames(0));
+        DateTime lastWriteTime = File.GetLastWriteTime(projectItem.get_FileNames(0));
         foreach (var type in projectItem.FileCodeModel.CodeElements.OfType<CodeClass2>())
         {
-            ProcessDecoratorType(type, area, controllerLastWriteTime);
+            ProcessDecoratorType(type, lastWriteTime, decorators);
         }
         // Process all the elements that are namespaces
         foreach (var ns in projectItem.FileCodeModel.CodeElements.OfType<CodeNamespace>())
         {
             foreach (var type in ns.Members.OfType<CodeClass2>())
             {
-                ProcessDecoratorType(type, area, controllerLastWriteTime);
+                ProcessDecoratorType(type, lastWriteTime, decorators);
             }
         }
     }
 }
 
-void ProcessDecoratorType(CodeClass2 type, AreaInfo area, DateTime controllerLastWriteTime)
+void ProcessDecoratorType(CodeClass2 type, DateTime lastWriteTime, HashSet<DecoratorInfo> decorators)
 {
     // Only process decorators
     if (!IsDecorator(type))
@@ -288,7 +266,6 @@ void ProcessDecoratorType(CodeClass2 type, AreaInfo area, DateTime controllerLas
     // Collect misc info about the decorator class and add it to the collection
     var decoratorInfo = new DecoratorInfo
     {
-        Area = area,
         Namespace = type.Namespace != null ? type.Namespace.Name : String.Empty,
         ClassName = type.Name,
         AccessModifier = type.Access == vsCMAccess.vsCMAccessProject ? "internal" : "public",
@@ -316,13 +293,13 @@ void ProcessDecoratorType(CodeClass2 type, AreaInfo area, DateTime controllerLas
 
     // Check if the controller has changed since the generated file was last created
     DateTime lastGenerationTime = File.GetLastWriteTime(decoratorInfo.GeneratedFileFullPath);
-    if (lastGenerationTime > controllerLastWriteTime)
+    if (lastGenerationTime > lastWriteTime)
     {
         decoratorInfo.GeneratedCodeIsUpToDate = true;
     }
 
     // Either process new DecoratorInfo or integrate results into existing object for partially defined classes
-    var target = area.Decorators.Add(decoratorInfo) ? decoratorInfo : area.Decorators.First(c => c.Equals(decoratorInfo));
+    var target = decorators.Add(decoratorInfo) ? decoratorInfo : decorators.First(c => c.Equals(decoratorInfo));
 
     if (type.IsAbstract)
     {
@@ -343,7 +320,7 @@ void ProcessDecorationTargets(DecoratorInfo decoratorInfo, CodeClass2 current)
 
     // Fields that have the same type as an implemented interface are a decoration targets.
     decoratorInfo.DecorationTargets = 
-        (from target in GetFields(current)
+        (from target in current.Members.OfType<CodeVariable2>()
          where interfaces.Where(i => i.FullName == target.Type.AsFullName).Any()
          select new DecorationTargetInfo(current, target)).ToArray();
 }
@@ -384,25 +361,6 @@ static bool IsDecorator(CodeClass2 type)
     // Ignore generated decorator files as well.
     return type.FullName.EndsWith(DecoratorSuffix)
         && !type.ProjectItem.Name.EndsWith(".generated.cs");
-}
-
-static string ProcessAreaOrDecoratorName(string name)
-{
-    return name;
-}
-
-// Return all the CodeFunction2 in the CodeElements collection
-static IEnumerable<CodeVariable2> GetFields(CodeClass2 codeClass)
-{
-    // Get fields defined by the class.
-    return codeClass.Members.OfType<CodeVariable2>();
-}
-
-// Return all the CodeFunction2 in the CodeElements collection
-static IEnumerable<CodeProperty2> GetProperties(CodeInterface2 codeClass)
-{
-    // Get fields defined by the class.
-    return codeClass.Members.OfType<CodeProperty2>();
 }
 
 // Return all the CodeFunction2 in the CodeElements collection
@@ -586,7 +544,6 @@ class DecoratorInfo
     {
     }
 
-    public AreaInfo Area { get; set; }
     public bool IsAbstract { get; set; }
     public bool GeneratedCodeIsUpToDate { get; set; }
     public string ClassName { get; set; }
